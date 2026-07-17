@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Miles | Data Science Portfolio</title>
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Home view -->
+    <div id="home-view" class="page-view is-active">
+        <header class="hero">
+            <div class="overlay">
+                <h1>Alex Miles</h1>
+                <p>Data Scientist | Data Analyst | Software Developer</p>
+            </div>
+        </header>
+
+        <main class="container">
+            <section id="about">
+                <h2>About Me</h2>
+                <p>
+                    I am a data scientist with a interest in machine learning, analytics, software development, and building end-to-end solutions. I have worked across a range of industries, including pharmacy, music and media, transport, research, and construction.
+
+                    In addition to data science, I develop game and puzzle apps as personal and commercial projects. This portfolio showcases a selection of projects that highlight my experience in data science, software engineering, and game development.
+                </p>
+            </section>
+
+            <section id="projects">
+                <h2>Sample Projects</h2>
+
+                <div class="projects-grid">
+                    <a href="#steam" class="project-card" data-page="steam">
+                        <img src="images/project1_steam_game.jpg" alt="Screenshot of Ultimate Chopsticks">
+                        <div class="project-title">Ultimate Chopsticks</div>
+                    </a>
+
+                    <a href="notebooks/ConnectX_V1_00.html" class="project-card" target="_blank" rel="noopener noreferrer">
+                        <img src="images/project2.jpg" alt="Coding AI for competitive games">
+                        <div class="project-title">Customer Churn</div>
+                    </a>
+
+                    <a href="https://github.com/MinMaxDog" class="project-card" target="_blank" rel="noopener noreferrer">
+                        <img src="images/project3.jpg" alt="House price prediction project">
+                        <div class="project-title">Connect X Game AI</div>
+                    </a>
+                </div>
+            </section>
+
+            <section id="links">
+                <h2>Links</h2>
+                <p class="site-links">
+                    <a href="https://github.com/MinMaxDog" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <span aria-hidden="true">|</span>
+                    <a href="https://www.linkedin.com/in/alexander-miles-b84ab880/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <span aria-hidden="true">|</span>
+                    <a href="cv.pdf" target="_blank">CV</a>
+                </p>
+            </section>
+        </main>
+    </div>
+
+    <!-- Ultimate Chopsticks project view -->
+    <div id="steam-view" class="page-view" aria-hidden="true">
+        <header class="project-hero">
+            <div class="project-hero-overlay">
+                <button class="back-button" type="button" data-page="home">&larr; Back to portfolio</button>
+
+                <div class="project-hero-text">
+                    <p class="eyebrow">Featured Steam Project</p>
+                    <h1>Ultimate Chopsticks</h1>
+                    <p>Multiplayer strategy, configurable rules, heuristic AI, and reusable networking architecture</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="container project-page">
+            <section>
+                <h2>Project Overview</h2>
+
+                <img src="images/gameplay.jpg" alt="Gameplay screenshot from Ultimate Chopsticks" class="project-detail-image">
+
+                <p>
+                    <strong>Ultimate Chopsticks</strong> is a multiplayer strategy game based on the traditional Chopsticks hand game. I designed, developed, and released the project on Steam using GameMaker Studio 2, with all game systems written in GameMaker Language (GML).
+                </p>
+
+                <p>
+                    The main goal was to create a complete digital implementation that supports the many Chopsticks rule variants played around the world. A configurable rules engine lets players customise game mechanics without changing the underlying game logic.
+                </p>
+
+                <p>
+                    Alongside the game, I developed a reusable networking framework capable of synchronising arbitrary turn-based game states, making the underlying architecture applicable to future multiplayer projects.
+                </p>
+            </section>
+
+            <section>
+                <h2>Key Features</h2>
+                <ul class="feature-grid">
+                    <li>Online multiplayer over Steam</li>
+                    <li>Local hot-seat multiplayer</li>
+                    <li>Configurable rules engine</li>
+                    <li>Single-player AI opponent</li>
+                    <li>Persistent challenge mode</li>
+                    <li>Steam friend integration</li>
+                    <li>Host-authoritative networking</li>
+                    <li>Reusable turn-based networking framework</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Multiplayer Networking</h2>
+                <p>
+                    The multiplayer system uses a <strong>host-authoritative architecture</strong>. When a player performs an action, the client sends only the move to the host. The host validates it, updates the canonical game state, serialises the result, and broadcasts the updated state to every connected client.
+                </p>
+
+                <p>
+                    This approach keeps all players synchronised and reduces the risk of divergence caused by dropped or delayed packets. Because Chopsticks has a compact state, sending the complete updated state after each move provides a simple and robust solution with minimal overhead.
+                </p>
+
+                <figure class="architecture-figure">
+                    <img src="images/ultimate_chopsticks_network_move.jpg" alt="Player 2 sends a move to the authoritative game host">
+                    <figcaption>Step 1: the active player sends only the move object to the host.</figcaption>
+                </figure>
+
+                <figure class="architecture-figure">
+                    <img src="images/ultimate_chopsticks_network_state.jpg" alt="The host broadcasts the updated game state to all players">
+                    <figcaption>Step 2: the host validates the move and distributes the new authoritative game state.</figcaption>
+                </figure>
+
+                <p>
+                    The networking layer also includes packet fragmentation for larger messages, heartbeat monitoring, connection timeouts, and defensive handling of disconnected players.
+                </p>
+            </section>
+
+            <section>
+                <h2>Steam Integration</h2>
+                <p>
+                    Rather than relying entirely on Steam's lobby system, I implemented a custom matchmaking solution. The game queries each player's Steam friends list and exchanges lightweight presence messages between users currently running the game. This provides direct control over matchmaking while keeping sessions limited to existing Steam friends.
+                </p>
+            </section>
+
+            <section>
+                <h2>Reusable Networking Framework</h2>
+                <p>
+                    The networking code is independent of the Chopsticks rules. Another turn-based game can use the framework by providing two conversion functions: one to serialise its game state into a string and another to reconstruct that state. This separation keeps game logic and transport logic loosely coupled and makes the framework reusable with minimal modification.
+                </p>
+            </section>
+
+            <section>
+                <h2>Artificial Intelligence</h2>
+                <p>
+                    The computer opponent uses depth-limited game-tree search with heuristic evaluation. Search depth scales with difficulty, providing stronger play at higher settings while keeping response times quick on lower settings.
+                </p>
+
+                <p>Non-terminal positions are evaluated using factors such as:</p>
+                <ul class="content-list">
+                    <li>Number of legal moves available</li>
+                    <li>Number of active hands remaining</li>
+                    <li>Overall board position</li>
+                </ul>
+
+                <p>
+                    Small amounts of controlled randomness reduce predictability and allow lower difficulty levels to make occasional human-like mistakes.
+                </p>
+            </section>
+
+            <section>
+                <h2>Testing and Reliability</h2>
+                <p>
+                    Randomised systems were tested with deterministic seeds so procedural rules and AI behaviour could be reproduced during debugging. The networking layer was also tested under packet-loss and timeout conditions to verify that synchronisation failures and disconnected players were handled gracefully.
+                </p>
+            </section>
+
+            <section>
+                <h2>Technologies and Skills</h2>
+                <div class="technology-list">
+                    <span>GameMaker Studio 2</span>
+                    <span>GameMaker Language (GML)</span>
+                    <span>Steamworks API</span>
+                    <span>Multiplayer Networking</span>
+                    <span>State Serialisation</span>
+                    <span>Heuristic Search</span>
+                    <span>Artificial Intelligence</span>
+                    <span>Defensive Programming</span>
+                    <span>Software Architecture</span>
+                    <span>UI Design</span>
+                </div>
+            </section>
+
+            <section class="project-actions">
+                <a class="primary-button" href="https://store.steampowered.com/app/3173940/Ultimate_Chopsticks/" target="_blank" rel="noopener noreferrer">Play free on Steam</a>
+                <button class="secondary-button" type="button" data-page="home">Back to projects</button>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const homeView = document.getElementById("home-view");
+        const steamView = document.getElementById("steam-view");
+
+        function showPage(pageName, updateHistory = true) {
+            const showSteam = pageName === "steam";
+
+            homeView.classList.toggle("is-active", !showSteam);
+            steamView.classList.toggle("is-active", showSteam);
+
+            homeView.setAttribute("aria-hidden", String(showSteam));
+            steamView.setAttribute("aria-hidden", String(!showSteam));
+
+            document.title = showSteam
+                ? "Ultimate Chopsticks | Alex Miles"
+                : "Alex Miles | Data Science Portfolio";
+
+            if (updateHistory) {
+                const newHash = showSteam ? "#steam" : "#home";
+                history.pushState({ page: pageName }, "", newHash);
+            }
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        document.querySelectorAll("[data-page]").forEach((control) => {
+            control.addEventListener("click", (event) => {
+                event.preventDefault();
+                showPage(control.dataset.page);
+            });
+        });
+
+        window.addEventListener("popstate", () => {
+            showPage(window.location.hash === "#steam" ? "steam" : "home", false);
+        });
+
+        showPage(window.location.hash === "#steam" ? "steam" : "home", false);
+    </script>
+</body>
+</html>
