@@ -6,6 +6,31 @@
     <title>Alex Miles | Data Science Portfolio</title>
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .hero-avatar {
+            position: absolute;
+            top: 50%;
+            right: clamp(1.5rem, 8vw, 8rem);
+            display: block;
+            width: clamp(120px, 16vw, 180px);
+            height: auto;
+            margin: 0;
+            object-fit: contain;
+            transform: translateY(-50%);
+            background: transparent;
+        }
+
+        .hero .overlay {
+            position: relative;
+        }
+
+        @media (max-width: 700px) {
+            .hero-avatar {
+                right: 1rem;
+                width: clamp(90px, 24vw, 120px);
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -13,6 +38,13 @@
     <div id="home-view" class="page-view is-active">
         <header class="hero">
             <div class="overlay">
+                <img
+                    class="hero-avatar"
+                    src="images/cartoon-avatar-circle.png"
+                    alt="Cartoon portrait of Alex Miles"
+                    width="1254"
+                    height="1254"
+                >
                 <h1>Alex Miles</h1>
                 <p>Data Scientist | Data Analyst | Software Developer</p>
             </div>
@@ -22,7 +54,7 @@
             <section id="about">
                 <h2>About Me</h2>
                 <p>
-                    I am a data scientist with an interest in machine learning, analytics, software development, and building end-to-end solutions. I have worked across a range of industries, including pharmacy, music and media, transport, research, and construction.
+                    I am a data scientist with a interest in machine learning, analytics, software development, and building end-to-end solutions. I have worked across a range of industries, including pharmacy, music and media, transport, research, and construction.
 
                     In addition to data science, I develop game and puzzle apps as personal and commercial projects. This portfolio showcases a selection of projects that highlight my experience in data science, software engineering, and game development.
                 </p>
@@ -36,7 +68,7 @@
                         <img src="images/project1_steam_game.jpg" alt="Screenshot of Ultimate Chopsticks">
                         <div class="project-title">Ultimate Chopsticks</div>
                     </a>
-                    <a href="https://minmaxdog.github.io/Kaggle/Churn_Unesco.html"
+                    <a href="https://github.com/MinMaxDog"
                        class="project-card"
                        target="_blank"
                        rel="noopener noreferrer">
