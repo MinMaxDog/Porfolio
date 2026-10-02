@@ -7,46 +7,251 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="style.css">
     <style>
-        .hero-avatar {
-            position: absolute;
-            top: 50%;
-            right: clamp(1.5rem, 8vw, 8rem);
+        .page-view:not(.is-active) { display: none; }
+
+        .progress-slideshow {
+            position: relative;
             display: block;
-            width: clamp(120px, 16vw, 180px);
-            height: auto;
-            margin: 0;
-            object-fit: contain;
-            transform: translateY(-50%);
-            background: transparent;
+            width: 100% !important;
+            max-width: none !important;
+            height: auto !important;
+            aspect-ratio: 456 / 330 !important;
+            overflow: hidden;
+            background: #253047;
         }
 
-        .hero .overlay {
-            position: relative;
+        .progress-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 900ms ease;
         }
+
+        .progress-slide.is-current { opacity: 1; }
+
+        .progress-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .progress-slideshow > .progress-slide-title {
+            color: #fff !important;
+            z-index: 2;
+            opacity: 1 !important;
+            transition: none !important;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, .8);
+            pointer-events: none;
+        }
+
+        .progress-slideshow:focus-visible { outline: 3px solid #477fd5; outline-offset: 4px; }
+
+        #projects .sample-carousel { position: relative; width: min(100%, 456px); aspect-ratio: 456 / 330; margin: 0 auto; }
+        #projects .projects-grid { display: block; width: 100%; height: 100%; }
+        #projects .project-card { display: block; width: 100% !important; max-width: none !important; height: auto !important; aspect-ratio: 456 / 330; }
+        #projects .project-card img { display: block; width: 100%; height: 100%; object-fit: cover; }
+        #projects .project-card[hidden] { display: none !important; }
+        .sample-carousel button {
+            position: absolute;
+            z-index: 3;
+            top: 50%;
+            transform: translateY(-50%);
+            display: grid;
+            place-items: center;
+            border: 3px solid currentColor;
+            border-radius: 50%;
+            width: 4rem;
+            height: 4rem;
+            background: rgba(0, 0, 0, .65);
+            color: inherit;
+            cursor: pointer;
+        }
+        .sample-carousel button svg { width: 3rem; height: 3rem; stroke-width: 4; }
+        #sample-previous { left: -4.5rem; }
+        #sample-next { right: -4.5rem; }
+        .sample-carousel button:focus-visible { outline: 3px solid #477fd5; outline-offset: 2px; }
+        #sample-position { display: block; text-align: center; margin-top: .75rem; font-size: 2rem; }
+        #work-in-progress .projects-grid { display: block; width: min(100%, 456px); aspect-ratio: 456 / 330; margin: 0 auto; }
+        #projects .project-title, #work-in-progress .progress-slide-title { font-size: 1.75rem !important; }
+
+        .progress-project-list { display: grid; gap: 2rem; }
+
+        .progress-project {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(180px, 34%);
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .progress-project + .progress-project { border-top: 1px solid rgba(128, 128, 128, .45); padding-top: 2rem; }
+        .progress-project h3 { margin-top: 0; }
+        .progress-project img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
 
         @media (max-width: 700px) {
-            .hero-avatar {
-                right: 1rem;
-                width: clamp(90px, 24vw, 120px);
+            .progress-project { grid-template-columns: minmax(0, 1fr) minmax(110px, 38%); gap: 1rem; }
+            #sample-previous { left: .5rem; }
+            #sample-next { right: .5rem; }
+            .sample-carousel button { color: #fff; }
+        }
+
+        /* Interactive mesh across the page, behind every view. */
+        body { background: #050e25 !important; background-image: none !important; color: #dbe8f7; }
+        body::before, body::after { content: none !important; display: none !important; }
+        #mesh-scene {
+            position: fixed; inset: 0; width: 100vw; height: 100vh; display: block;
+            z-index: 0; pointer-events: none;
+        }
+        .mesh-shade {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background: rgba(2,6,20,.12);
+        }
+        .page-view { position: relative; z-index: 1; background: transparent !important; background-image: none !important; }
+        .page-view > main.container {
+            position: relative; isolation: isolate;
+            background: transparent !important; background-image: none !important; color: #dbe8f7;
+        }
+        #home-view > main.container {
+            opacity: 0; animation: content-appear .65s 1.4s ease-out forwards;
+        }
+        .page-view > main.container::before {
+            content: ""; position: absolute; inset: -140px -180px -140px; z-index: -1; pointer-events: none;
+            background: linear-gradient(to right,
+                transparent 0%, rgba(5,14,37,.7) 10%, #050e25 17%,
+                #050e25 83%, rgba(5,14,37,.7) 90%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom,
+                transparent 0, rgba(0,0,0,.2) 55px, rgba(0,0,0,.7) 115px, #000 180px,
+                #000 calc(100% - 180px), rgba(0,0,0,.7) calc(100% - 115px), rgba(0,0,0,.2) calc(100% - 55px), transparent 100%);
+            mask-image: linear-gradient(to bottom,
+                transparent 0, rgba(0,0,0,.2) 55px, rgba(0,0,0,.7) 115px, #000 180px,
+                #000 calc(100% - 180px), rgba(0,0,0,.7) calc(100% - 115px), rgba(0,0,0,.2) calc(100% - 55px), transparent 100%);
+        }
+        .page-view > main.container h2, .page-view > main.container h3 { color: #f3f7ff; }
+        .page-view > main.container p { color: #d1def0; }
+        #home-view > .mesh-hero {
+            position: relative; display: flex; align-items: center;
+            justify-content: center; box-sizing: border-box; width: 100%;
+            height: clamp(300px, 38svh, 400px); min-height: 0; overflow: visible;
+            padding: 2rem 1rem; background: transparent !important; background-image: none !important; color: #f3f7ff;
+            cursor: crosshair;
+        }
+        .page-view > .project-hero { background: transparent !important; background-image: none !important; }
+        #home-view > .mesh-hero::before,
+        #home-view > .mesh-hero::after { content: none !important; display: none !important; }
+        #home-view > .mesh-hero .overlay {
+            position: absolute !important; top: 57% !important; left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 2; display: block; height: auto !important; min-height: 0 !important;
+            width: min(100%, 1000px); max-width: 1000px;
+            padding: .5rem; margin: 0; text-align: center; background: transparent !important;
+            box-shadow: none !important; border: 0; pointer-events: none;
+        }
+        .mesh-hero .hero-copy { text-align: center; }
+        .mesh-hero .hero-main {
+            display: flex; justify-content: center; align-items: center;
+            gap: clamp(1.5rem, 4vw, 3.5rem);
+        }
+        .mesh-hero .hero-avatar {
+            position: static; display: block; flex: 0 0 auto; width: clamp(75px, 10vw, 115px);
+            height: auto; margin: 0; transform: none; object-fit: contain; background: transparent;
+            opacity: 0; animation: mesh-rise 1.35s cubic-bezier(.16,1,.3,1) forwards;
+        }
+        #home-view > .mesh-hero h1 {
+            margin: 0; color: #f3f7ff; font-size: clamp(1.8rem, 3.8vw, 3.3rem);
+            line-height: 1.2; letter-spacing: -.045em; font-weight: 800; text-transform: none !important;
+            text-shadow: 0 4px 40px rgba(100,186,255,.28);
+        }
+        .mesh-hero .rise-line { display: block; overflow: hidden; padding: .06em 0; }
+        .mesh-hero .rise-line > span {
+            display: block; opacity: 0; transform: translateY(115%);
+            animation: mesh-rise 1.35s cubic-bezier(.16,1,.3,1) forwards;
+        }
+        .mesh-hero .rise-line:nth-child(2) > span { animation-delay: .28s; }
+        @keyframes mesh-rise {
+            from { opacity: 0; transform: translateY(115%); filter: blur(8px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        @keyframes content-appear { from { opacity: 0; } to { opacity: 1; } }
+        #home-view > .mesh-hero .mesh-role {
+            max-width: 42rem; margin: 1.3rem auto 0; color: #c3d3ed;
+            font-size: clamp(.85rem, 1.5vw, 1.1rem); line-height: 1.55;
+            text-shadow: 0 2px 16px rgba(0,4,20,.9);
+            opacity: 0; animation: content-appear 1s 1.85s ease-out forwards;
+        }
+        @media (max-width: 600px) {
+            #home-view > .mesh-hero { height: clamp(270px, 37svh, 350px); padding: 1.25rem .5rem; }
+            #home-view > .mesh-hero .hero-main { gap: .9rem; }
+            #home-view > .mesh-hero .hero-avatar { width: clamp(58px, 17vw, 80px); }
+            #home-view > .mesh-hero h1 { font-size: clamp(1.35rem, 5.5vw, 2rem); }
+            #home-view > .mesh-hero .mesh-role { font-size: clamp(.7rem, 2.8vw, .9rem); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mesh-hero .rise-line > span, .mesh-hero .hero-avatar,
+            #home-view > .mesh-hero .mesh-role, #home-view > main.container {
+                animation: none; opacity: 1; transform: none; filter: none;
             }
+        }
+
+        .page-view:not(#home-view) { animation: none; }
+        .page-view:not(#home-view) > main.container {
+            opacity: 0; animation: content-appear .4s ease-out forwards;
+            text-align: left;
+        }
+        .subpage-intro {
+            max-width: 1000px; min-height: 270px; margin: 0 auto;
+            padding: 42px 25px 30px; display: flex; flex-direction: column;
+            justify-content: center; text-align: left;
+            animation: content-appear .4s ease-out both;
+        }
+        .subpage-intro .back-button { margin-bottom: 1.75rem; }
+        .subpage-intro h1 { text-align: center; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.15; margin-bottom: 1rem; }
+        .subpage-intro > p { text-align: center; }
+        @media (prefers-reduced-motion: reduce) {
+            .subpage-intro, .page-view:not(#home-view) > main.container { animation: none; opacity: 1; }
+        }
+
+        .technology-icons {
+            display: grid; grid-template-columns: repeat(10, minmax(0, 1fr));
+            max-width: 660px; margin: 1.5rem auto 0; row-gap: 0;
+        }
+        .technology-icon {
+            position: relative; margin: 0; padding: .25rem .3rem 1.5rem;
+            display: flex; flex-direction: column; align-items: center;
+            border-radius: 12px; outline-offset: 3px;
+        }
+        .technology-icon img {
+            display: block; width: clamp(42px, 9.2vw, 88px); height: clamp(42px, 9.2vw, 88px);
+            object-fit: contain; transition: transform .2s ease;
+        }
+        .technology-icon figcaption {
+            position: absolute; bottom: 0; left: 50%; transform: translate(-50%, 4px);
+            color: #dcefff; font-size: clamp(.65rem, 1.8vw, .9rem); white-space: nowrap;
+            opacity: 0; transition: opacity .2s ease, transform .2s ease;
+        }
+        .technology-icon:hover figcaption, .technology-icon:focus figcaption {
+            opacity: 1; transform: translate(-50%, 0);
+        }
+        .technology-icon:hover img, .technology-icon:focus img { transform: translateY(-3px); }
+        .technology-icon:focus-visible { outline: 2px solid #42f9f4; }
+        @media (prefers-reduced-motion: reduce) {
+            .technology-icon img, .technology-icon figcaption { transition: none; }
         }
     </style>
 </head>
 <body>
+    <canvas id="mesh-scene" aria-hidden="true"></canvas>
+    <div class="mesh-shade" aria-hidden="true"></div>
 
     <!-- Home view -->
     <div id="home-view" class="page-view is-active">
-        <header class="hero">
+        <header class="hero mesh-hero">
             <div class="overlay">
-                <img
-                    class="hero-avatar"
-                    src="images/cartoon-avatar-circle.png"
-                    alt="Cartoon portrait of Alex Miles"
-                    width="1254"
-                    height="1254"
-                >
-                <h1>Alex Miles</h1>
-                <p>Data Scientist | Data Analyst | Software Developer</p>
+                <div class="hero-copy">
+                    <div class="hero-main">
+                        <h1><span class="rise-line"><span>Hello, my name is Alex.</span></span><span class="rise-line"><span>Welcome to my portfolio.</span></span></h1>
+                        <img class="hero-avatar" src="images/cartoon-avatar-circle.png" alt="Cartoon portrait of Alex Miles" width="1254" height="1254">
+                    </div>
+                    <p class="mesh-role">Data Scientist | Data Analyst | Software Developer</p>
+                </div>
             </div>
         </header>
 
@@ -58,28 +263,69 @@
 
                     In addition to data science, I develop game and puzzle apps as personal and commercial projects. This portfolio showcases a selection of projects that highlight my experience in data science, software engineering, and game development.
                 </p>
+                <p>As of 2026, I am working as a Senior Data Analyst for a construction training company.</p>
+
             </section>
 
             <section id="projects">
                 <h2>Sample Projects</h2>
 
-                <div class="projects-grid">
+                <div class="sample-carousel">
+                    <button type="button" id="sample-previous" aria-label="Previous sample project"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M34 24H10m0 0 12-12M10 24l12 12"/></svg></button>
+                    <div class="projects-grid" id="sample-project-slides" aria-label="Sample projects carousel">
                     <a href="#steam" class="project-card" data-page="steam">
                         <img src="images/project1_steam_game.jpg" alt="Screenshot of Ultimate Chopsticks">
                         <div class="project-title">Ultimate Chopsticks</div>
                     </a>
-                    <a href="https://minmaxdog.github.io/Kaggle/Churn_Unesco.html"
+                    <a href="https://minmaxdog.github.io/Kaggle/Churn_Unesco_cleaned.html"
                        class="project-card"
+                       hidden
                        target="_blank"
                        rel="noopener noreferrer">
                         <img src="images/project2.jpg" alt="Customer Churn">
                         <div class="project-title">Customer Churn</div>
                     </a>
 
-                    <a href="https://minmaxdog.github.io/Kaggle/ConnectX.html" class="project-card" target="_blank" rel="noopener noreferrer">
+                    <a href="https://minmaxdog.github.io/Kaggle/ConnectX_cleaned.html" class="project-card" target="_blank" rel="noopener noreferrer" hidden>
                         <img src="images/project3.jpg" alt="Connect X Game AI">
                         <div class="project-title">Connect X Game AI</div>
                     </a>
+                    </div>
+                    <button type="button" id="sample-next" aria-label="Next sample project"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 24h24m0 0L26 12m12 12L26 36"/></svg></button>
+                </div>
+                <span id="sample-position" role="status" aria-live="polite">1 of 3</span>
+            </section>
+
+            <section id="work-in-progress">
+                <h2>2026/2027 Projects coming soon</h2>
+                <div class="projects-grid">
+                <a class="project-card progress-slideshow" href="#work-in-progress-page" data-page="work-in-progress-page" aria-label="Explore 2026/2027 Projects coming soon">
+                    <span class="progress-slide is-current" aria-hidden="false" data-title="Social Deduction Solver">
+                        <img src="images/socaildecuation.png" alt="" loading="lazy">
+                    </span>
+                    <span class="progress-slide" aria-hidden="true" data-title="House Build Time Series Forecast">
+                        <img src="images/timeseriesforcasthouse.png" alt="" loading="lazy">
+                    </span>
+                    <span class="progress-slide" aria-hidden="true" data-title="New Game: Pixel Domain">
+                        <img src="images/PixelDomain.png" alt="" loading="lazy">
+                    </span>
+                    <span class="project-title progress-slide-title" aria-hidden="true">Social Deduction Solver</span>
+                </a>
+                </div>
+            </section>
+
+            <section id="technologies">
+                <h2>Technologies</h2>
+                <div class="technology-icons" aria-label="Technologies I use">
+                    <figure class="technology-icon" tabindex="0" aria-label="Azure" style="grid-row:1;grid-column:1/span 2"><img src="images/Azure.png" alt="" loading="lazy"><figcaption>Azure</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="C#" style="grid-row:1;grid-column:3/span 2"><img src="images/CSharp.png" alt="" loading="lazy"><figcaption>C#</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="GML" style="grid-row:1;grid-column:5/span 2"><img src="images/GML.png" alt="" loading="lazy"><figcaption>GML</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="Git" style="grid-row:1;grid-column:7/span 2"><img src="images/Git.png" alt="" loading="lazy"><figcaption>Git</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="Power BI" style="grid-row:1;grid-column:9/span 2"><img src="images/Power_BI.png" alt="" loading="lazy"><figcaption>Power BI</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="Python" style="grid-row:2;grid-column:2/span 2"><img src="images/Python.png" alt="" loading="lazy"><figcaption>Python</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="SQL" style="grid-row:2;grid-column:4/span 2"><img src="images/SQL.png" alt="" loading="lazy"><figcaption>SQL</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="TensorFlow" style="grid-row:2;grid-column:6/span 2"><img src="images/TensorFlow.png" alt="" loading="lazy"><figcaption>TensorFlow</figcaption></figure>
+                    <figure class="technology-icon" tabindex="0" aria-label="VBA" style="grid-row:2;grid-column:8/span 2"><img src="images/VBA.png" alt="" loading="lazy"><figcaption>VBA</figcaption></figure>
                 </div>
             </section>
 
@@ -90,26 +336,55 @@
                     <span aria-hidden="true">|</span>
                     <a href="https://www.linkedin.com/in/alexander-miles-b84ab880/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                     <span aria-hidden="true">|</span>
-                    <a href="cv.pdf" target="_blank">CV</a>
+                    <a href="CV_Alex_Miles.pdf" target="_blank">CV</a>
                 </p>
+            </section>
+        </main>
+    </div>
+
+    <div id="work-in-progress-page-view" class="page-view" aria-hidden="true">
+        <header class="subpage-intro">
+                <button class="back-button" type="button" data-page="home">&larr; Back to portfolio</button>
+                <h1>2026/2027 Projects coming soon</h1>
+                
+        </header>
+        <main class="container project-page">
+            <section>
+                <h2>Projects coming soon</h2>
+                <div class="progress-project-list">
+                    <article class="progress-project">
+                        <div>
+                            <h3>Social Deduction Solver · 2027</h3>
+                            <p>Social deduction games pit a large, uninformed good team against a smaller, informed evil team. The good team receives small pieces of information and must work out who is on each side to win, while the evil team obscures the truth with lies and false information. This tool will take discrete clues as input and help solve these games by presenting possible worlds showing who could be on the good and evil teams.</p>
+                        </div>
+                        <img src="images/socaildecuation.png" alt="Social Deduction Solver project artwork" loading="lazy">
+                    </article>
+                    <article class="progress-project">
+                        <div>
+                            <h3>House Build Time Series Forecast · 2026</h3>
+                            <p>Uses the Federal Reserve Bank of St. Louis’s <a href="https://www.stlouisfed.org/research/economists/mccracken/fred-databases" target="_blank" rel="noopener noreferrer">FRED-MD data</a> to model US house building through time series analysis and popular methods such as AutoRegressive Integrated Moving Average (ARIMA).</p>
+                        </div>
+                        <img src="images/timeseriesforcasthouse.png" alt="House Build Time Series Forecast project artwork" loading="lazy">
+                    </article>
+                    <article class="progress-project">
+                        <div>
+                            <h3>New Game: Pixel Domain · 2027</h3>
+                            <p>A minimalist 4X strategy game you can play against the AI or through hosted network play. Available to <a href="https://store.steampowered.com/app/3403750/Pixel_Domain/" target="_blank" rel="noopener noreferrer">wishlist on Steam</a>.</p>
+                        </div>
+                        <img src="images/PixelDomain.png" alt="Pixel Domain game artwork" loading="lazy">
+                    </article>
+                </div>
             </section>
         </main>
     </div>
 
     <!-- Ultimate Chopsticks project view -->
     <div id="steam-view" class="page-view" aria-hidden="true">
-        <header class="project-hero">
-            <div class="project-hero-overlay">
+        <header class="subpage-intro">
                 <button class="back-button" type="button" data-page="home">&larr; Back to portfolio</button>
-
-                <div class="project-hero-text">
-                    <p class="eyebrow">Featured Steam Project</p>
-                    <h1>Ultimate Chopsticks</h1>
-                    <p>Multiplayer strategy, configurable rules, heuristic AI, and reusable networking architecture</p>
-                </div>
-            </div>
+                <h1>Ultimate Chopsticks</h1>
+                <p>Multiplayer strategy, configurable rules, heuristic AI, and reusable networking architecture</p>
         </header>
-
         <main class="container project-page">
             <section>
                 <h2>Project Overview</h2>
@@ -231,24 +506,188 @@
     </div>
 
     <script>
+(()=>{
+  const canvas=document.querySelector('#mesh-scene'),ctx=canvas.getContext('2d',{alpha:false});
+  let w=0,h=0,dpr=1,time=0,last=0,particles=[],stars=[];
+  let dents=[],activeDent=null,lastPointer=null;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  function resize(){
+    w=innerWidth;h=innerHeight;dpr=Math.min(devicePixelRatio||1,2);
+    canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+    stars=Array.from({length:Math.round(Math.min(110,w*h/11000))},()=>({x:Math.random()*w,y:Math.random()*h,r:rand(.35,1.2),a:rand(.12,.48)}));
+  }
+  addEventListener('resize',resize,{passive:true});resize();
+  function clearDents(){dents=[];activeDent=null;lastPointer=null}
+  addEventListener('pointermove',e=>{
+    const px=e.clientX,py=e.clientY;
+    if(px<0||px>w||py<0||py>h){clearDents();return}
+    fadeRect=document.querySelector('.page-view.is-active > main.container')?.getBoundingClientRect()||null;
+    if(inFadeArea(px,py)){clearDents();return}
+    const now=performance.now();
+    const speed=lastPointer?Math.hypot(px-lastPointer.x,py-lastPointer.y)*1000/Math.max(8,now-lastPointer.t):0;
+    lastPointer={x:px,y:py,t:now};
+    // Slow motion drags the same depression. A fast move beyond the wider
+    // reset circle starts a fresh shallow one while the old patch rebounds.
+    const resetRadius=85;
+    if(!activeDent||(speed>550&&Math.hypot(px-activeDent.x,py-activeDent.y)>resetRadius)){
+      if(activeDent)activeDent.release=0;
+      activeDent={x:px,y:py,targetX:px,targetY:py,dwell:0,release:null};
+      dents.push(activeDent);
+    }
+    activeDent.targetX=px;activeDent.targetY=py;
+  },{passive:true});
+  document.addEventListener('pointerleave',clearDents);
+  addEventListener('mouseout',e=>{if(!e.relatedTarget)clearDents()});
+  addEventListener('blur',clearDents);
+  const spacing=36;
+  let fadeRect=null,hoverLight=0;
+  function inFadeArea(x,y){
+    if(!fadeRect)return false;
+    const left=fadeRect.left-180,right=fadeRect.right+180;
+    const top=fadeRect.top-140,bottom=fadeRect.bottom+140;
+    // Only the fully opaque center blocks interaction. Feathered edges react.
+    const feather=(right-left)*.17;
+    return x>=left+feather&&x<=right-feather&&y>=top+180&&y<=bottom-180;
+  }
+  function gridLight(x,y){
+    if(!lastPointer)return 1;
+    const dx=x-lastPointer.x,dy=y-lastPointer.y;
+    const nearby=Math.exp(-(dx*dx+dy*dy)/(140*140));
+    return 1+2.6*hoverLight*nearby;
+  }
+  function field(x,row,t){
+    const base=-spacing*2+row*spacing;
+    const wave=Math.sin(x*.008+t*.92+row*.39)*13+Math.sin(x*.017-t*.65+row*.72)*6+Math.sin(x*.003+t*.38+row*.23)*13;
+    const radiusCap=Math.max(145,Math.min(200,Math.min(w,h)*.25));
+    let warpedX=x,warpedY=base+wave;
+    for(const dent of dents){
+      const dx=x-dent.x,dy=base+wave-dent.y;
+      // Each second closes half the remaining distance to the circular cap.
+      const radius=radiusCap*(1-Math.pow(2,-dent.dwell));
+      if(radius<=0)continue;
+      const distance2=(dx*dx+dy*dy)/(radius*radius);
+      if(distance2>=1)continue;
+      const shape=Math.pow(1-distance2,3);
+      const spring=dent.release===null?1:Math.exp(-8*dent.release)*Math.cos(9*dent.release);
+      const influence=shape*spring;
+      // The center tends toward twice the screen height, slower than width.
+      const depth=2*h*(1-Math.pow(2,-dent.dwell/3));
+      warpedX+=dx*.06*influence;
+      warpedY+=depth*influence;
+    }
+    return {x:warpedX,y:warpedY};
+  }
+  function spawn(initial=false){
+    const row=Math.floor(rand(0,Math.ceil(h/spacing)+2));
+    particles.push({row,x:initial?rand(-w,w):rand(-100,-25),speed:rand(70,175),r:rand(1.3,2.7),hue:Math.random()<.25?270:180,phase:rand(0,7)});
+  }
+  for(let i=0;i<Math.min(12,Math.round(w/120));i++)spawn(true);
+  function segment(a,b,alpha,width,color){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=color.replace('ALPHA',alpha.toFixed(3));ctx.lineWidth=width;ctx.stroke()}
+  function render(ms){
+    const dt=Math.min((ms-last)/1000||0,.05);last=ms;if(!reduced.matches)time+=dt;
+    fadeRect=document.querySelector('.page-view.is-active > main.container')?.getBoundingClientRect()||null;
+    if(lastPointer&&inFadeArea(lastPointer.x,lastPointer.y))clearDents();
+    hoverLight=lastPointer?1:0;
+    for(const dent of dents){
+      if(dent.release===null){
+        dent.dwell+=dt;
+        const follow=1-Math.exp(-dt*4);
+        dent.x+=(dent.targetX-dent.x)*follow;
+        dent.y+=(dent.targetY-dent.y)*follow;
+      }else dent.release+=dt;
+    }
+    dents=dents.filter(dent=>dent.release===null||dent.release<1.1);
+    ctx.fillStyle='#050e25';ctx.fillRect(0,0,w,h);
+    const halo=ctx.createRadialGradient(w*.5,h*.64,0,w*.5,h*.64,Math.max(w,h)*.8);
+    halo.addColorStop(0,'#13234f');halo.addColorStop(.52,'#091936');halo.addColorStop(1,'#050c20');ctx.fillStyle=halo;ctx.fillRect(0,0,w,h);
+    for(const s of stars){ctx.globalAlpha=s.a*(.8+.2*Math.sin(time*1.2+s.x));ctx.fillStyle='#a4c9ff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
+    const rows=Math.ceil(h/spacing)+5,cols=Math.ceil(w/spacing)+2;
+    ctx.save();ctx.globalCompositeOperation='screen';
+    for(let row=0;row<rows;row++){
+      for(let col=-1;col<cols;col++){
+        const x=col*spacing,a=field(x,row,time),b=field(x+spacing,row,time);
+        const light=gridLight((a.x+b.x)*.5,(a.y+b.y)*.5);
+        segment(a,b,Math.min(.75,.19*light),1,'rgba(45,235,248,ALPHA)');
+        if(col%3===0)segment(a,b,Math.min(.24,.045*light),4,'rgba(37,212,255,ALPHA)');
+        if(row<rows-1){const c=field(x,row+1,time),verticalLight=gridLight((a.x+c.x)*.5,(a.y+c.y)*.5);segment(a,c,Math.min(.6,.13*verticalLight),1,'rgba(117,116,255,ALPHA)')}
+      }
+    }
+    if(!reduced.matches&&Math.random()<dt*1.8&&particles.length<24)spawn();
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];if(!reduced.matches)p.x+=p.speed*dt;
+      if(p.x>w+90){particles.splice(i,1);continue}
+      const point=field(p.x,p.row,time),behind=field(p.x-32,p.row,time),ahead=field(p.x+3,p.row,time);
+      ctx.globalAlpha=.7;
+      const rgb=p.hue===270?'176,129,255':'89,255,246';
+      const trail=ctx.createLinearGradient(behind.x,behind.y,point.x,point.y);trail.addColorStop(0,`rgba(${rgb},0)`);trail.addColorStop(1,`rgba(${rgb},.32)`);
+      ctx.beginPath();ctx.moveTo(behind.x,behind.y);ctx.quadraticCurveTo(field(p.x-16,p.row,time).x,field(p.x-16,p.row,time).y,point.x,point.y);ctx.strokeStyle=trail;ctx.lineWidth=p.r*1.35;ctx.stroke();
+      const glow=ctx.createRadialGradient(point.x,point.y,0,point.x,point.y,p.r*7);glow.addColorStop(0,`rgba(${rgb},.38)`);glow.addColorStop(.22,`rgba(${rgb},.10)`);glow.addColorStop(1,`rgba(${rgb},0)`);
+      ctx.fillStyle=glow;ctx.beginPath();ctx.arc(point.x,point.y,p.r*7,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='rgba(224,255,255,.48)';ctx.beginPath();ctx.arc(ahead.x,ahead.y,p.r*.65,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    ctx.restore();requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+})();
+</script>
+
+    <script>
         const homeView = document.getElementById("home-view");
         const steamView = document.getElementById("steam-view");
+        const progressView = document.getElementById("work-in-progress-page-view");
+        const progressSlides = Array.from(document.querySelectorAll(".progress-slide"));
+        const progressSlideTitle = document.querySelector(".progress-slide-title");
+        const sampleCarousel = document.getElementById("projects");
+        const sampleProjects = Array.from(document.querySelectorAll("#sample-project-slides .project-card"));
+        const samplePosition = document.getElementById("sample-position");
+        let currentSample = 0;
+
+        function showSample(index) {
+            currentSample = (index + sampleProjects.length) % sampleProjects.length;
+            sampleProjects.forEach((card, i) => { card.hidden = i !== currentSample; });
+            samplePosition.textContent = `${currentSample + 1} of ${sampleProjects.length}`;
+        }
+
+        document.getElementById("sample-previous").addEventListener("click", () => showSample(currentSample - 1));
+        document.getElementById("sample-next").addEventListener("click", () => showSample(currentSample + 1));
+        setInterval(() => {
+            if (!sampleCarousel.matches(":hover, :focus-within") && !document.hidden && homeView.classList.contains("is-active")) {
+                showSample(currentSample + 1);
+            }
+        }, 4000);
+        let currentSlide = 0;
+
+        setInterval(() => {
+            progressSlides[currentSlide].classList.remove("is-current");
+            progressSlides[currentSlide].setAttribute("aria-hidden", "true");
+            currentSlide = (currentSlide + 1) % progressSlides.length;
+            progressSlides[currentSlide].classList.add("is-current");
+            progressSlides[currentSlide].setAttribute("aria-hidden", "false");
+            progressSlideTitle.textContent = progressSlides[currentSlide].dataset.title;
+        }, 2000);
 
         function showPage(pageName, updateHistory = true) {
             const showSteam = pageName === "steam";
+            const showProgress = pageName === "work-in-progress-page";
 
-            homeView.classList.toggle("is-active", !showSteam);
+            homeView.classList.toggle("is-active", !showSteam && !showProgress);
             steamView.classList.toggle("is-active", showSteam);
+            progressView.classList.toggle("is-active", showProgress);
 
-            homeView.setAttribute("aria-hidden", String(showSteam));
+            homeView.setAttribute("aria-hidden", String(showSteam || showProgress));
             steamView.setAttribute("aria-hidden", String(!showSteam));
+            progressView.setAttribute("aria-hidden", String(!showProgress));
 
             document.title = showSteam
                 ? "Ultimate Chopsticks | Alex Miles"
-                : "Alex Miles | Data Science Portfolio";
+                : showProgress
+                    ? "2026/2027 Projects coming soon | Alex Miles"
+                    : "Alex Miles | Data Science Portfolio";
 
             if (updateHistory) {
-                const newHash = showSteam ? "#steam" : "#home";
+                const newHash = showSteam ? "#steam" : showProgress ? "#work-in-progress-page" : "#home";
                 history.pushState({ page: pageName }, "", newHash);
             }
 
@@ -263,10 +702,16 @@
         });
 
         window.addEventListener("popstate", () => {
-            showPage(window.location.hash === "#steam" ? "steam" : "home", false);
+            showPage(pageFromHash(), false);
         });
 
-        showPage(window.location.hash === "#steam" ? "steam" : "home", false);
+        function pageFromHash() {
+            if (window.location.hash === "#steam") return "steam";
+            if (window.location.hash === "#work-in-progress-page") return "work-in-progress-page";
+            return "home";
+        }
+
+        showPage(pageFromHash(), false);
     </script>
 </body>
 </html>
